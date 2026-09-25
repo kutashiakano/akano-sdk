@@ -3,6 +3,7 @@ export interface PermissionOptions {
   owners?: (string | number)[];
   premium?: (string | number)[];
   admins?: (string | number)[];
+  db?: { users?: Record<string, { premium?: boolean; admin?: boolean }> };
 }
 
 interface MinimalSock {
@@ -53,6 +54,9 @@ export function getPermission(sender: unknown, opts: PermissionOptions = {}): Pe
   if (owners.includes(num) || owners.includes(String(sender))) return "owner";
   if (normList(opts.premium).includes(num)) return "premium";
   if (normList(opts.admins).includes(num)) return "admin";
+  const rec = opts.db && opts.db.users ? opts.db.users[String(sender)] : undefined;
+  if (rec && rec.premium) return "premium";
+  if (rec && rec.admin) return "admin";
   return "user";
 }
 

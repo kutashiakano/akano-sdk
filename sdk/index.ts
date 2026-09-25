@@ -11,7 +11,7 @@ import * as cooldown from "./common/cooldown.js";
 import * as permission from "./common/permission.js";
 import * as proxy from "./common/proxy.js";
 import * as queue from "./common/queue.js";
-import { define } from "./define.js";
+import { define, defineBot } from "./define.js";
 import { Platform } from "./platform-class.js";
 import * as verify from "./verify.js";
 import * as menu from "./menu.js";
@@ -65,7 +65,7 @@ PlatformAny.sessions = sessions;
 PlatformAny.cards = cards;
 PlatformAny.config = configModule;
 
-export { Platform, define, text, telegram, discord, voice, discordVoice, whatsapp, core, common, verify, menu, runtime, i18n, scheduler, antidelete, buttons, wizard, session, airich, sessions, cards, loadConfig };
+export { Platform, define, defineBot, text, telegram, discord, voice, discordVoice, whatsapp, core, common, verify, menu, runtime, i18n, scheduler, antidelete, buttons, wizard, session, airich, sessions, cards, loadConfig };
 export const dcvoice = discordVoice;
 export const config = configModule;
 export type * from "./whatsapp.js";
