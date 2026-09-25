@@ -435,7 +435,7 @@ export function defineBot(m: BotDefineInput = {}, host: BotHost = {}): Record<st
         DB: getDB(),
         db: (() => { try { return host.db ? host.db().get() : null; } catch { return null; } })(),
         reply: (content: unknown, extra: any = {}) =>
-          new Promise((resolve) => {
+          new Promise<void>((resolve) => {
             try {
               const result = interaction.reply({ content, flags: extra.ephemeral ? 64 : undefined });
               (result && typeof (result as any).then === "function" ? result : Promise.resolve()).then(resolve).catch(() => resolve());
@@ -444,7 +444,7 @@ export function defineBot(m: BotDefineInput = {}, host: BotHost = {}): Record<st
             }
           }),
         editReply: (content: unknown) =>
-          new Promise((resolve) => {
+          new Promise<void>((resolve) => {
             try {
               const result = interaction.editReply({ content });
               (result && typeof (result as any).then === "function" ? result : Promise.resolve()).then(resolve).catch(() => resolve());
