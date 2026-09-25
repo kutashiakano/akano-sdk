@@ -67,6 +67,7 @@ export { card, button, actionRow, watch, clear, attach, thumb, meter, clock, md 
 export { send, forward, reply, poll, file, sticker, react, mention, delay, download, media } from "../sdk/whatsapp.js";
 export { sanitize, splitSmart, stripMd } from "../sdk/text.js";
 export { AIRichBuilder } from "../sdk/airich.js";
+export { ui } from "../sdk/discord.js";
 export { defineBot } from "../sdk/define.js";
 export { smsg, serializeM } from "./serialize.js";
 export const auth = authModule;

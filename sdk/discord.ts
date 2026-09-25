@@ -231,6 +231,38 @@ export interface DiscordMessage {
   thread: (name: string, autoArchive?: number) => Promise<unknown>;
 }
 
+export interface DiscordUI {
+  embed: () => any;
+  btn: (id: string, label: string, style?: unknown) => any;
+  row: (buttons: unknown[]) => any;
+  collect: (msg: any, filter: (...args: any[]) => boolean, ms: number, onEnd?: any) => Promise<any>;
+  strip: (msg: any) => void;
+  file: (name: string) => { attachment: Buffer; name: string }[];
+  art: (name: string, embed: any) => { attachment: Buffer; name: string }[];
+  bar: (cur: number, max: number, len: number) => string;
+  chunk: (text: unknown, maxLength?: number) => string[];
+  fmtTime: (ms: number) => string;
+  rich: (src: unknown) => string;
+}
+
+export function ui(opts: { iconsDir?: string } = {}): DiscordUI {
+  if (opts.iconsDir) icons(opts.iconsDir);
+  const dir = opts.iconsDir;
+  return {
+    embed: () => card(),
+    btn: (id: string, label: string, style?: unknown) => button(id, label, style),
+    row: (buttons: unknown[]) => actionRow(buttons),
+    collect: (msg: any, filter: (...args: any[]) => boolean, ms: number, onEnd?: any) => watch(msg, filter, ms, onEnd),
+    strip: (msg: any) => clear(msg),
+    file: (name: string) => attach(name, dir),
+    art: (name: string, embed: any) => thumb(name, embed, dir),
+    bar: (cur: number, max: number, len: number) => meter(cur, max, len),
+    chunk: (text: unknown, maxLength?: number) => chop(text, maxLength),
+    fmtTime: (ms: number) => clock(ms),
+    rich: (src: unknown) => md(src)
+  };
+}
+
 export function readMsg(message: any): DiscordMessage {
   const atts: DiscordAttachment[] = [];
   try {

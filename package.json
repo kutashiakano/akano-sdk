@@ -1,6 +1,6 @@
 {
   "name": "@kutashiakanocanzy/sdk",
-  "version": "0.2.2-beta.10",
+  "version": "0.2.2-beta.11",
   "description": "Multi-platform bot helpers: WhatsApp core plus Telegram and Discord adapters",
   "keywords": [
     "sdk",

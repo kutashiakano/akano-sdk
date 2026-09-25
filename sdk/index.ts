@@ -66,6 +66,7 @@ PlatformAny.cards = cards;
 PlatformAny.config = configModule;
 
 export { Platform, define, defineBot, text, telegram, discord, voice, discordVoice, whatsapp, core, common, verify, menu, runtime, i18n, scheduler, antidelete, buttons, wizard, session, airich, sessions, cards, loadConfig };
+export { ui } from "./discord.js";
 export const dcvoice = discordVoice;
 export const config = configModule;
 export type * from "./whatsapp.js";
