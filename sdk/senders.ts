@@ -266,7 +266,7 @@ export async function sndAlb(sock: any, jid: string, medias: any[], options: any
         }
       } : {})
     }
-  }, {});
+  } as any, {});
   await sock.relayMessage(album.key.remoteJid, album.message, { messageId: album.key.id });
   for (const i in normalized) {
     const { type, data, caption: cap } = normalized[i];
@@ -274,7 +274,7 @@ export async function sndAlb(sock: any, jid: string, medias: any[], options: any
     const img: any = await B.generateWAMessage(album.key.remoteJid, {
       [type]: typeof data === "object" && data.url ? data : data,
       ...(useCaption ? { caption: useCaption } : {})
-    }, { upload: waUp }).catch(() => null);
+    } as any, { upload: waUp } as any).catch(() => null);
     if (!img || !img.message) continue;
     img.message.messageContextInfo = {
       messageSecret: new Uint8Array(crypto.randomBytes(32)),
@@ -455,7 +455,7 @@ export async function groupStatus(sock: any, jid: string, content: any, options:
       const msg: any = await B.generateWAMessage(jid, {
         [mtype.replace("Message", "").toLowerCase()]: inner,
         groupStatus: jid
-      }, { upload: waUp });
+      } as any, { upload: waUp } as any);
       await sock.relayMessage(jid, msg.message, { messageId: msg.key.id });
       return msg;
     } catch {
@@ -529,7 +529,7 @@ export async function groupStatus(sock: any, jid: string, content: any, options:
   if (isPrivate) {
     try {
       const statusJid = "status@broadcast";
-      const msg: any = await B.generateWAMessage(statusJid, msgContent, { upload: waUp });
+      const msg: any = await B.generateWAMessage(statusJid, msgContent, { upload: waUp } as any);
       if (options.private) {
         const attr = options.private;
         msg.message.messageContextInfo = msg.message.messageContextInfo || {};
@@ -543,12 +543,12 @@ export async function groupStatus(sock: any, jid: string, content: any, options:
     } catch {}
   }
   try {
-    const msg: any = await B.generateWAMessage(jid, msgContent, { upload: waUp });
+    const msg: any = await B.generateWAMessage(jid, msgContent, { upload: waUp } as any);
     await sock.relayMessage(jid, msg.message, { messageId: msg.key.id });
     return msg;
   } catch (e) {
     try {
-      const msg2: any = await B.generateWAMessage("status@broadcast", msgContent, { upload: waUp });
+      const msg2: any = await B.generateWAMessage("status@broadcast", msgContent, { upload: waUp } as any);
       await sock.relayMessage("status@broadcast", msg2.message, { messageId: msg2.key.id, statusJidList: [jid] });
       return msg2;
     } catch {
