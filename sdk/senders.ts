@@ -266,7 +266,7 @@ export async function sndAlb(sock: any, jid: string, medias: any[], options: any
         }
       } : {})
     }
-  } as any, {});
+  } as any, {} as any);
   await sock.relayMessage(album.key.remoteJid, album.message, { messageId: album.key.id });
   for (const i in normalized) {
     const { type, data, caption: cap } = normalized[i];
