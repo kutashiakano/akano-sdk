@@ -70,6 +70,7 @@ export { AIRichBuilder } from "../sdk/airich.js";
 export { ui } from "../sdk/discord.js";
 export { defineBot } from "../sdk/define.js";
 export { smsg, serializeM } from "./serialize.js";
+export { sendMessageModify, sendMessageModifyV2, sendMessageVerify, sendMessageVerifyV2, sendProgress, sndAlb, sendAlbumMessage, sendAlbum, sendVideoAsSticker, sendContact, pollResult, sendPtv, groupStatus, copyNForward, downloadAndSaveMediaMessage } from "../sdk/senders.js";
 export const auth = authModule;
 export const Config = loadConfig();
 export type * from "../sdk/index.js";
