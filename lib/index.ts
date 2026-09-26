@@ -8,6 +8,7 @@ import * as Converter from "./converter.js";
 import { Spam } from "./spam.js";
 import { Database } from "./database.js";
 import * as sdk from "../sdk/index.js";
+export { useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, Browsers, DisconnectReason, default as makeWASocket } from "@whiskeysockets/baileys";
 import * as voip from "./voip/index.js";
 import { DiscordVoice } from "../sdk/discordVoice.js";
 import * as authModule from "./auth.js";
