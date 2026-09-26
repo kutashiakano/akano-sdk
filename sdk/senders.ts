@@ -418,14 +418,13 @@ export async function copyNForward(sock: any, jid: string, msg: any, forceForwar
   const mtype = Object.keys(msg.message)[0];
   const cMsg: any = (B.proto as any).Message.fromObject(msg.message);
   const content = cMsg[mtype];
-  if (typeof content === "string") cMsg[mtype] = content;
-  else if (content.contextInfo) cMsg[mtype].contextInfo = content.contextInfo;
-  if (forceForward) cMsg[mtype].contextInfo = {
+  if (content && typeof content === "object" && content.contextInfo) cMsg[mtype].contextInfo = content.contextInfo;
+  if (forceForward && cMsg[mtype] && typeof cMsg[mtype] === "object") cMsg[mtype].contextInfo = {
     ...(cMsg[mtype].contextInfo || {}),
     forwardingScore: forceForward ? 1 : 0,
     isForwarded: true
   };
-  await sock.relayMessage(jid, { [mtype]: cMsg }, { messageId: msg.key.id, ...options });
+  await sock.relayMessage(jid, { [mtype]: cMsg[mtype] }, { messageId: msg.key.id, ...options });
   return msg;
 }
 
