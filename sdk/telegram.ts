@@ -280,6 +280,26 @@ export async function sendVote(api: any, chatId: string | number, question: stri
   return api.sendPoll(chatId, String(question).slice(0, 300), opts, Object.assign({ is_anonymous: false }, extra || {}));
 }
 
+export interface BotCommand {
+  command: string;
+  description: string;
+}
+
+export async function setMyCommands(token: string, commands: BotCommand[]): Promise<boolean> {
+  const list = (commands || [])
+    .filter((c) => c && typeof c.command === "string")
+    .map((c) => ({ command: c.command.toLowerCase(), description: String(c.description || "No description").slice(0, 256) }));
+  if (!list.length) return false;
+  const res = await fetch("https://api.telegram.org/bot" + token + "/setMyCommands", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ commands: list })
+  });
+  const data: any = await (res as any).json().catch(() => ({}));
+  if (!data || data.ok !== true) throw new Error("setMyCommands failed: " + JSON.stringify(data).slice(0, 160));
+  return true;
+}
+
 import { Bot, Api, Composer, session, InlineKeyboard, Keyboard, InputMediaBuilder, InputFile, GrammyError, HttpError, BotError } from "grammy";
 
 export { Bot, Api, Composer, session, InlineKeyboard, Keyboard, InputMediaBuilder, InputFile, GrammyError, HttpError, BotError };
