@@ -1,10 +1,23 @@
 {
   "name": "@kutashiakanocanzy/sdk",
-  "version": "0.2.2-beta.19",
+  "version": "1.0.0",
   "description": "Multi-platform bot SDK in TypeScript: WhatsApp (Baileys), Telegram (grammy), Discord (discord.js) — sessions, plugins, rich messages",
   "keywords": [
     "sdk",
-    "baileys"
+    "baileys",
+    "grammy",
+    "discord.js",
+    "whatsapp-bot",
+    "telegram-bot",
+    "discord-bot",
+    "multi-platform",
+    "chatbot",
+    "bot-framework",
+    "whatsapp",
+    "telegram",
+    "discord",
+    "rich-messages",
+    "bot-sdk"
   ],
   "license": "MIT",
   "author": "akano",

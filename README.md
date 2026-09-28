@@ -1,16 +1,16 @@
 <div align="center">
 
-# 🤖 @kutashiakanocanzy/sdk
+# @kutashiakanocanzy/sdk
 
-**One SDK for WhatsApp · Telegram · Discord bots — in TypeScript.**
+**One SDK for WhatsApp, Telegram and Discord bots — in TypeScript.**
 
-*CJS + ESM + `.d.ts`. Connection, session, plugins, serialize & media convert handled — you just write commands.*
+*CJS + ESM + `.d.ts`. Connection, session, plugins, serialize and media convert handled — you just write commands.*
 
-| | Platform | Engine | Login |
-|---|---|---|---|
-| 💚 | **WhatsApp** | [Baileys](https://github.com/WhiskeySockets/Baileys) | QR 1x / pairing code |
-| 💙 | **Telegram** | [grammy](https://grammy.dev) | [@BotFather](https://t.me/BotFather) token |
-| 💜 | **Discord** | [discord.js](https://discord.js.org) | Developer Portal token |
+| Platform | Engine | Login |
+|---|---|---|
+| **WhatsApp** | [Baileys](https://github.com/WhiskeySockets/Baileys) | QR once / pairing code |
+| **Telegram** | [grammy](https://grammy.dev) | [@BotFather](https://t.me/BotFather) token |
+| **Discord** | [discord.js](https://discord.js.org) | Developer Portal token |
 
 </div>
 
@@ -24,6 +24,7 @@
 - [Telegram](#telegram)
 - [Discord](#discord)
 - [Plugins](#plugins)
+- [Rich Messages (Telegram)](#rich-messages-telegram)
 - [Runtime](#runtime)
 - [Database Auth and Sessions](#database-auth-and-sessions)
 - [Tools](#tools)
@@ -47,8 +48,8 @@
 
 ```bash
 npm install @kutashiakanocanzy/sdk
-# pin beta live:
-npm install @kutashiakanocanzy/sdk@0.2.2-beta.9
+# pin a version:
+npm install @kutashiakanocanzy/sdk@1.0.0
 # optional peer deps — install only what you use:
 npm install better-sqlite3   # sqlite://
 # npm install ioredis        # redis://
@@ -59,13 +60,13 @@ npm install better-sqlite3   # sqlite://
 Build output is `dist/cjs` (require) + `dist/esm` (import) + `.d.ts`, built via `prepare` (`npm run build`).
 
 ```javascript
-// CommonJS
-const { Platform, Database, Function, DiscordVoice, callFor, define, menu, verify } = require('@kutashiakanocanzy/sdk')
+// CommonJS — every helper imports straight from the root, no deep paths
+const { Platform, Database, Function, DiscordVoice, callFor, define, defineBot, menu, verify } = require('@kutashiakanocanzy/sdk')
 ```
 
 ```typescript
-// ESM + types (setara, pilih salah satu)
-import { Platform, Database, Function, DiscordVoice, callFor, define, menu, verify } from '@kutashiakanocanzy/sdk'
+// ESM + types (equivalent, pick one)
+import { Platform, Database, Function, DiscordVoice, callFor, define, defineBot, menu, verify } from '@kutashiakanocanzy/sdk'
 import type { PlatformOptions, ButtonInput, HtmlOptions } from '@kutashiakanocanzy/sdk'
 ```
 
@@ -531,6 +532,32 @@ Media can be `'silence'`, a URL or path, a playlist array, or `{ video }` / `{ a
 
 </details>
 
+### Rich senders
+
+Beyond the basics above, the SDK ships the full set of WhatsApp rich senders. All take `(sock, ...)` and are imported from the root:
+
+| Export | Function |
+|---|---|
+| `sendMessageModify(sock, jid, text, msg, opts)` | message with external ad reply + link preview |
+| `sendMessageVerify(sock, jid, text, fakeName, opts)` | verified forward-style message |
+| `sendProgress(sock, jid, text, quoted, opts)` | progress message, edited in place |
+| `sndAlb(sock, jid, medias, opts)` | real album message (`sendAlbumMessage` / `sendAlbum` aliases) |
+| `sendVideoAsSticker(sock, jid, src, quoted, opts)` | video or GIF to sticker with exif |
+| `sendContact(sock, jid, data, quoted, opts)` | contact cards, single or multiple |
+| `pollResult(sock, jid, pollData, quoted, opts)` | poll result aggregation message |
+| `sendPtv(sock, jid, src, quoted, opts)` | push-to-talk voice note |
+| `groupStatus(sock, jid, content, opts)` | status broadcast with background |
+| `copyNForward(sock, jid, msg, force, opts)` | copy + forward, view-once aware |
+| `downloadAndSaveMediaMessage(sock, msg, filename)` | download media straight to disk |
+
+```javascript
+const { sndAlb, sendContact, sendProgress } = require('@kutashiakanocanzy/sdk')
+
+await sndAlb(sock, chat, [{ image: 'https://x/a.jpg' }, { video: 'https://x/b.mp4' }], { text: 'Catalog' })
+await sendContact(sock, chat, [{ name: 'Bo', number: '62812xxxxxxx' }])
+const sent = await sendProgress(sock, chat, 'Working...', m)
+```
+
 ## Telegram
 
 Needs `grammy`. Proxy-aware (`HTTPS_PROXY` supported).
@@ -565,8 +592,34 @@ const msg = tg.readMsg(ctx)
 await tg.typing(ctx)
 await tg.sendVideo(ctx, bufOrUrl, { caption: 'Here' })
 await tg.answerTap(ctx, 'Saved!')
-await tg.sendReact(ctx, '👍')
+await tg.sendReact(ctx, '👍') // emoji reaction, functional in code samples
 ```
+
+### Rich messages (Bot API 10.1+)
+
+Native rich blocks — headings, tables, quotes, code, spoilers — plus live streaming with a thinking indicator and a Stop button. No HTML escaping needed.
+
+```javascript
+const { sendRichMessage, sendRichMessageDraft } = require('@kutashiakanocanzy/sdk')
+
+const blocks = [
+  { type: 'heading', text: 'Results', size: 2 },
+  { type: 'table', cells: [
+    [{ text: 'Name', is_header: true, align: 'left', valign: 'top' }, { text: 'Score', is_header: true, align: 'center', valign: 'top' }],
+    [{ text: 'Bo', align: 'left', valign: 'top' }, { text: '10', align: 'center', valign: 'top' }]
+  ], is_bordered: true },
+  { type: 'blockquote', blocks: [{ type: 'paragraph', text: 'Quoted text' }] },
+  { type: 'paragraph', text: [{ type: 'bold', text: 'Bold' }, ' and ', { type: 'spoiler', text: 'hidden' }] }
+]
+
+// Streaming: thinking draft first, partial updates on the same draft id, then finalize
+const draftId = Date.now() % 2147483647
+await sendRichMessageDraft(token, chatId, draftId, { blocks: [{ type: 'thinking', text: 'Thinking…' }] }, { can_stop: true })
+await sendRichMessageDraft(token, chatId, draftId, { blocks: partialBlocks }, { can_stop: true })
+await sendRichMessage(token, chatId, { blocks: blocks }) // persists the final message
+```
+
+Drafts are ephemeral (30-second preview, private chats only). When the user presses Stop, the bot receives an `stopped_message_generation` update with the `draft_id`.
 
 ## Discord
 
@@ -642,11 +695,11 @@ module.exports.discord = {
 
 ## Plugins
 
-### WhatsApp plugin
+One file per command (ESM or CommonJS, hot-reloaded):
 
 ```javascript
 // plugins/ping.js
-module.exports = {
+export default {
   name: 'ping',
   command: ['ping', 'p'],
   description: 'Check latency',
@@ -663,12 +716,12 @@ WhatsApp handler signature is `run(m, extra)` where `extra` holds `{ conn, sock,
 
 ```javascript
 // plugins/ping.js
-module.exports.telegram = {
+export const telegram = {
   command: ['ping'],
   run: async ctx => ctx.reply('Pong!')
 }
 
-module.exports.discord = {
+export const discord = {
   command: ['ping'],
   run: async interaction => interaction.reply('Pong!')
 }
@@ -695,15 +748,42 @@ Aliases also work: `wa` for `whatsapp`, `tg` for `telegram`, `dc` for `discord`.
 ```javascript
 const { define } = require('@kutashiakanocanzy/sdk')
 
-module.exports = define({
+const plugin = define({
   name: ['profile', 'me'],
   description: 'Show your profile',
   cooldown: 3,
   run: async ctx => ctx.reply(`Hi ${ctx.user.name} via ${ctx.platform}`)
 })
+module.exports = plugin
 ```
 
 Cooldown is per `name:user`. When hit, the bot replies with the cooldown message and skips `run`.
+
+### Gated plugin with defineBot
+
+`defineBot()` keeps the same shape but adds permission gates and Discord slash-command mapping. Gates are plain data — the host checks them before calling `run()`.
+
+| Field | Meaning |
+|---|---|
+| all `define()` fields | names, description, options, cooldown, run |
+| `owner` / `rowner` | owner-only / real-owner-only |
+| `premium` / `reg` / `limit` | premium users, registered users, usage limit |
+| `group` / `admin` / `private` / `botAdmin` | group-only, admin-only, DM-only, needs bot admin |
+| `example` / `use` / `wait` / `hidden` | usage text, wait flag, hide from menu |
+
+```javascript
+const { defineBot } = require('@kutashiakanocanzy/sdk')
+
+module.exports = defineBot({
+  name: ['ban'],
+  description: 'Ban a member',
+  owner: false,
+  group: true,
+  admin: true,
+  botAdmin: true,
+  run: async ctx => ctx.reply('Banned.')
+})
+```
 
 ## Runtime
 
@@ -1101,6 +1181,6 @@ Deep imports tetap didukung untuk development: `@kutashiakanocanzy/sdk/lib/voip`
 
 ## Limitations
 
-- `define()` only gates per-user `cooldown` — no built-in `owner`/`group`/`admin`/`premium` gates, check those in `run()` yourself.
+- `define()` only gates per-user `cooldown` — for full permission gates (`owner`, `group`, `admin`, `premium`, `reg`, `limit`) use `defineBot()`.
 - WhatsApp `Connection` has no proxy option — `HTTPS_PROXY`/`proxy` only applies to Telegram (`grammy`) and `proxyFetch`/converter fetches.
 - Types: `strict: false`, public APIs typed, WhatsApp raw payloads are largely `any`/`unknown` — validate at runtime.
