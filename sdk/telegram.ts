@@ -299,6 +299,23 @@ export async function setMyCommands(token: string, commands: BotCommand[]): Prom
   return true;
 }
 
+export interface RichDraftOptions {
+  message_thread_id?: number;
+  can_stop?: boolean;
+  keep_on_stop?: boolean;
+}
+
+export async function sendRichMessageDraft(token: string, chatId: string | number, draftId: number, richMessage: Record<string, unknown>, opts: RichDraftOptions = {}): Promise<boolean> {
+  const res = await fetch("https://api.telegram.org/bot" + token + "/sendRichMessageDraft", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, draft_id: draftId, rich_message: richMessage, ...opts })
+  });
+  const data: any = await (res as any).json().catch(() => ({}));
+  if (!data || data.ok !== true) throw new Error("sendRichMessageDraft failed: " + JSON.stringify(data).slice(0, 200));
+  return true;
+}
+
 export interface RichMessageOptions {
   reply_parameters?: Record<string, unknown>;
   reply_markup?: unknown;
