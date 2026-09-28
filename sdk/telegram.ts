@@ -284,7 +284,6 @@ export interface BotCommand {
   command: string;
   description: string;
 }
-
 export async function setMyCommands(token: string, commands: BotCommand[]): Promise<boolean> {
   const list = (commands || [])
     .filter((c) => c && typeof c.command === "string")
@@ -298,6 +297,25 @@ export async function setMyCommands(token: string, commands: BotCommand[]): Prom
   const data: any = await (res as any).json().catch(() => ({}));
   if (!data || data.ok !== true) throw new Error("setMyCommands failed: " + JSON.stringify(data).slice(0, 160));
   return true;
+}
+
+export interface RichMessageOptions {
+  reply_parameters?: Record<string, unknown>;
+  reply_markup?: unknown;
+  disable_notification?: boolean;
+  protect_content?: boolean;
+  message_thread_id?: number;
+}
+
+export async function sendRichMessage(token: string, chatId: string | number, richMessage: Record<string, unknown>, opts: RichMessageOptions = {}): Promise<any> {
+  const res = await fetch("https://api.telegram.org/bot" + token + "/sendRichMessage", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, rich_message: richMessage, ...opts })
+  });
+  const data: any = await (res as any).json().catch(() => ({}));
+  if (!data || data.ok !== true) throw new Error("sendRichMessage failed: " + JSON.stringify(data).slice(0, 200));
+  return data.result;
 }
 
 import { Bot, Api, Composer, session, InlineKeyboard, Keyboard, InputMediaBuilder, InputFile, GrammyError, HttpError, BotError } from "grammy";

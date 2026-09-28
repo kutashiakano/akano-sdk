@@ -64,7 +64,7 @@ export { Notifier, getPermission, isOwner, isPremium, isAdmin, isBotAdmin } from
 export { getProxyUrl, normalizeProxyUrl, shouldProxy, getProxyAgent, createProxyAgent, getFetchAgent, proxyFetch } from "../sdk/common/proxy.js";
 export { resize, toAudio, toPTT, toVideo, ffmpeg, addExif, makeExif, runFfmpeg, runFfprobe, isReadableStream, saveStreamToFile, getSpawnEnv } from "../sdk/common/converter.js";
 export { texted, status, userCard, spaced, formatNumber, esc, bold, sizeLimit, matcher, formatSize, cap, example, TG_PHOTO_MAX, TG_UPLOAD_MAX, toTime, generateLink, socmed } from "../sdk/core.js";
-export { Esc, chop, keyboard, presence, typing, sendRetry, answerTap, sendReact, mediaFile, isConflict, classifyError, setMyCommands } from "../sdk/telegram.js";
+export { Esc, chop, keyboard, presence, typing, sendRetry, answerTap, sendReact, mediaFile, isConflict, classifyError, setMyCommands, sendRichMessage } from "../sdk/telegram.js";
 export { card, button, actionRow, watch, clear, attach, thumb, meter, clock, md } from "../sdk/discord.js";
 export { send, forward, reply, poll, file, sticker, react, mention, delay, download, media } from "../sdk/whatsapp.js";
 export { sanitize, splitSmart, stripMd } from "../sdk/text.js";
