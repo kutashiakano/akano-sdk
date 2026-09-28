@@ -1,7 +1,7 @@
 {
   "name": "@kutashiakanocanzy/sdk",
-  "version": "0.2.2-beta.18",
-  "description": "Multi-platform bot helpers: WhatsApp core plus Telegram and Discord adapters",
+  "version": "0.2.2-beta.19",
+  "description": "Multi-platform bot SDK in TypeScript: WhatsApp (Baileys), Telegram (grammy), Discord (discord.js) — sessions, plugins, rich messages",
   "keywords": [
     "sdk",
     "baileys"
